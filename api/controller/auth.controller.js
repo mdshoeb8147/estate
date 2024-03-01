@@ -39,3 +39,12 @@ export const signin = async (req, res, next) => {
     next(error);
   }
 };
+
+export const signOut = async (res, req, next) => {
+  try {
+    res.clearCookies("access_token");
+    res.status(200).json({ message: "User signed out successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
