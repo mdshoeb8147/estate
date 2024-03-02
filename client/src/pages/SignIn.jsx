@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { signInStart,signInFailure,signInSuccess } from "../redux/user/userSlice";}
+import {
+  signInStart,
+  signInFailure,
+  signInSuccess,
+} from "../redux/user/userSlice.js";
 const SignIn = () => {
   const [formData, setFormData] = useState({});
-  const {loading,error}=useSelector((state)=>state.user)
+  const { loading, error } = useSelector((state) => state.user);
   // const [error, setError] = useState(null);
   // const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -16,7 +20,7 @@ const SignIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-dispatch(signInStart())
+      dispatch(signInStart());
       const res = await fetch("/api/auth/signin", {
         method: "POST",
         headers: {
@@ -26,14 +30,14 @@ dispatch(signInStart())
       });
       const data = await res.json();
       if (data.success === false) {
-        dispatch(signInFailure(data.message))
+        dispatch(signInFailure(data.message));
         return;
       }
 
-      dispatch(signInSuccess(data))
+      dispatch(signInSuccess(data));
       navigate("/");
     } catch (error) {
-     dispatch(signInFailure(error.message))
+      dispatch(signInFailure(error.message));
     }
   };
 
@@ -61,6 +65,12 @@ dispatch(signInStart())
         >
           {loading ? "Loading..." : "Sign In"}
         </button>
+        <Link
+          className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
+          to={"/create-listing"}
+        >
+          Create List
+        </Link>
       </form>
       <div className="flex gap-2 mt-5">
         <p>Dont Have an account?</p>
