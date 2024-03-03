@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   deleteUserFailure,
   deleteUserStart,
@@ -11,6 +11,8 @@ import {
 const Profile = () => {
   const { currentUser } = useSelector((state) => state.user);
   const fileRef = useRef(null);
+  const [userListings, setUserListings] = useState([]);
+  const [showListingError, setShowListingError] = useState(false);
   const dispatch = useDispatch();
   const handleDeleteUser = async () => {
     try {
@@ -42,6 +44,22 @@ const Profile = () => {
       dispatch(signOutUserFailure(error.message));
     }
   };
+
+  const handleShowListing = async () => {
+    try {
+      setShowListingError(false);
+      const res = await fetch(`/api/user/listings/${currentUser._id}`);
+      const data = await res.json();
+      if (data.success === false) {
+        setShowListingError(true);
+        return;
+      }
+      setUserListings(data);
+    } catch (error) {
+      setShowListingError(true);
+    }
+  };
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -86,9 +104,20 @@ const Profile = () => {
           Delete account
         </span>
         <span onClick={handleSignOut} className="text-red-700 cursor-pointer">
-          Sign Out{" "}
+          Sign Out
         </span>
       </div>
+      <button onClick={handleShowListing} className="text-green-700 w-full">
+        show listing
+      </button>
+      <p className="text-red-500 mt-5">
+        {showListingError ? "Error Showing listings" : " "}
+      </p>
+      {userListings &&
+        userListings.length > 0 &&
+        userListings.map((listing) => (
+          <div className="" key={listing._id}></div>
+        ))}
     </div>
   );
 };
